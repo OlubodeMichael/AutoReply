@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsx src/graph/nodes.ts",
     "dev": "ts-node src/index.ts"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.26.0",
   "dependencies": {
+    "@langchain/core": "^1.1.16",
     "@langchain/langgraph": "^1.1.0",
     "@langchain/openai": "^1.2.2",
     "axios": "^1.13.2",
