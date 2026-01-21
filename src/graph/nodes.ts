@@ -39,28 +39,29 @@ export async function chatNode(state: GraphStateType) {
 
 }
 
-async function test() {
-    let state: GraphStateType = {
-        customerQuestion: "",
-        businessDocument: [greenleafDental],
-        history: [],
-    } as GraphStateType;
+// Test function - uncomment and run manually if needed
+// async function test() {
+//     let state: GraphStateType = {
+//         customerQuestion: "",
+//         businessDocument: [greenleafDental],
+//         history: [],
+//     } as GraphStateType;
 
-    // Phase 1 test
-    state.customerQuestion = "Do you accept walk-ins?";
-    state = {
-        ...state,
-        ...(await chatNode(state)),
-    };
-    console.log(state.history.at(-1));
+//     // Phase 1 test
+//     state.customerQuestion = "Do you accept walk-ins?";
+//     state = {
+//         ...state,
+//         ...(await chatNode(state)),
+//     };
+//     console.log(state.history.at(-1));
 
-    // Phase 2 follow-up
-    state.customerQuestion = "What about Saturday?";
-    state = {
-        ...state,
-        ...(await chatNode(state)),
-    };
-    console.log(state.history.at(-1));
-}
+//     // Phase 2 follow-up
+//     state.customerQuestion = "What about Saturday?";
+//     state = {
+//         ...state,
+//         ...(await chatNode(state)),
+//     };
+//     console.log(state.history.at(-1));
+// }
 
-test();
+// test();

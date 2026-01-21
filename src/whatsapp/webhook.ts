@@ -51,7 +51,15 @@ router.post("/webhook/whatsapp", async (req, res) => {
         });
 
         // Acknowledge webhook
-        res.sendStatus(200);
+        res.status(200).json({
+            status: "success",
+            message: "Message sent successfully",
+            data: {
+                response: updatedState?.history.at(-1) || "",
+                status: "success",
+                message: "Message sent successfully",
+            },
+        });
     } catch (error) {
         console.error("Webhook error:", error);
         res.sendStatus(200); // Always acknowledge to WhatsApp
