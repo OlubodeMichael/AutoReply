@@ -8,6 +8,8 @@ This project builds a **WhatsApp-based AI assistant** that automatically respond
 
 The AI logic is built from scratch using **LangGraph (TypeScript)**, while WhatsApp integration is handled through webhook-based APIs (e.g., Twilio or Meta WhatsApp Cloud API).
 
+![AutoReply Architecture](AutoReply.png)
+
 ---
 
 ## Problem Statement
