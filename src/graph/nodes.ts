@@ -11,11 +11,11 @@ const greenleafDental = readFileSync(
 );
 
 
-export function initializeState(state: GraphStateType) {
+export function initializeState({ customerQuestion, history }: { customerQuestion: string, history: string[] }) {
     return {
         businessDocument: [greenleafDental],
-        conversationHistory: [],
-        customerQuestion: "",
+        history: history || [],
+        customerQuestion: customerQuestion || "",
     }
 }
 

@@ -18,10 +18,12 @@
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "langchain": "^1.2.10"
+    "langchain": "^1.2.10",
+    "morgan": "^1.10.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^25.0.9",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
