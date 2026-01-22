@@ -4,6 +4,7 @@ import { prompt } from "./prompt";
 import { readFileSync } from "fs";
 import { join } from "path";
 import "dotenv/config";
+import { ChatTurn } from "./types";
 
 const greenleafDental = readFileSync(
     join(__dirname, "../business-documents/greenleaf-dental.md"),
@@ -11,30 +12,41 @@ const greenleafDental = readFileSync(
 );
 
 
-export function initializeState({ customerQuestion, history }: { customerQuestion: string, history: string[] }) {
+export function initializeState({
+    customerQuestion,
+    history,
+}: {
+    customerQuestion: string;
+    history: ChatTurn[];
+}): GraphStateType {
     return {
-        businessDocument: [greenleafDental],
-        history: history || [],
-        customerQuestion: customerQuestion || "",
-    }
+        customerQuestion,
+        history,
+        businessDocument: [greenleafDental], // or routed doc
+    };
 }
+
 
 export async function chatNode(state: GraphStateType) {
     if (!state.customerQuestion) return;
 
     const formattedPrompt = prompt
         .replace("{{BUSINESS_DOCUMENT}}", state.businessDocument.join("\n\n"))
-        .replace("{{HISTORY}}", (state.history || []).join("\n"))
+        .replace("{{HISTORY}}", (state.history || []).map(turn => `${turn.role}: ${turn.content}`).join("\n"))
         .replace("{{CUSTOMER_QUESTION}}", state.customerQuestion);
 
     const response = await model.invoke([{ role: "system", content: formattedPrompt }]);
+    const answer = response.content as string;
+
+    const updatedHistory: ChatTurn[] = [
+        ...(state.history || []),
+        { role: "user", content: state.customerQuestion },
+        { role: "assistant", content: answer },
+    ];
 
     return {
-        history: [
-            ...(state.history || []),
-            `User: ${state.customerQuestion}`,
-            `Assistant: ${response.content}`,
-        ],
+        answer,
+        history: updatedHistory,
     };
 
 }

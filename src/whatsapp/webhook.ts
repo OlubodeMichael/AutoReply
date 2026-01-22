@@ -2,11 +2,12 @@ import express from "express";
 import { chatNode, initializeState } from "../graph/nodes";
 import { GraphStateType as State } from "../graph/state";
 import { sendWhatsAppMessage } from "../whatsapp/sendMessage";
+import { ChatTurn } from "../graph/types";
 
 const router = express.Router();
 
 
-const historyStore = new Map<string, string[]>();
+const historyStore = new Map<string, ChatTurn[]>();
 
 router.post("/webhook/whatsapp", async (req, res) => {
     try {
@@ -14,57 +15,62 @@ router.post("/webhook/whatsapp", async (req, res) => {
         const change = entry?.changes?.[0];
         const value = change?.value;
 
-        // Ignore non-message events (statuses, receipts, etc.)
         if (!value?.messages || value.messages.length === 0) {
             return res.sendStatus(200);
         }
 
         const message = value.messages[0];
 
-        // Only handle text messages for now
         if (message.type !== "text") {
             return res.sendStatus(200);
         }
 
-        const from = message.from; // phone number (history key)
+        const from = message.from;
         const text = message.text.body;
 
-        // Load conversation history (replace with Redis later)
         const history = historyStore.get(from) || [];
 
         const state: State = initializeState({
             customerQuestion: text,
             history,
-        })
-
-
-        // Call agent
-        const updatedState = await chatNode(state);
-
-        // Persist updated history
-        historyStore.set(from, updatedState?.history || []);
-
-        // Send response back to WhatsApp
-        await sendWhatsAppMessage({
-            to: from,
-            text: updatedState?.history.at(-1) || "",
         });
 
-        // Acknowledge webhook
+        const result = await chatNode(state);
+
+        if (!result) {
+            return res.sendStatus(200);
+        }
+
+        const { answer } = result;
+
+        const updatedHistory: ChatTurn[] = [
+            ...history,
+            { role: "user", content: text },
+            { role: "assistant", content: answer },
+        ];
+
+        historyStore.set(from, updatedHistory);
+
+        await sendWhatsAppMessage({
+            to: from,
+            text: answer,
+        });
+
         res.status(200).json({
             status: "success",
             message: "Message sent successfully",
             data: {
-                response: updatedState?.history.at(-1) || "",
+                response: answer,
                 status: "success",
                 message: "Message sent successfully",
             },
         });
     } catch (error) {
         console.error("Webhook error:", error);
-        res.sendStatus(200); // Always acknowledge to WhatsApp
+        res.sendStatus(200);
     }
 });
+
 
 
 router.get("/webhook/whatsapp", (req, res) => {
