@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 const historyStore = new Map<string, ChatTurn[]>();
+const processedMessageIds = new Set<string>();
 
 router.post("/webhook/whatsapp", async (req, res) => {
     try {
@@ -20,6 +21,13 @@ router.post("/webhook/whatsapp", async (req, res) => {
         }
 
         const message = value.messages[0];
+        const messageId = message.id;
+
+        if (processedMessageIds.has(messageId)) {
+            return res.sendStatus(200);
+        }
+
+        processedMessageIds.add(messageId);
 
         if (message.type !== "text") {
             return res.sendStatus(200);
