@@ -42,7 +42,10 @@ This project provides an **AI-powered WhatsApp chatbot** that:
 - Custom AI agent built with **LangGraph (TypeScript)**  
 - Conversation memory for context-aware responses  
 - Multi-tenant architecture (one webhook, many businesses)  
+- Intelligent action routing (answer, clarify, book appointment, escalate to human)
+- Clarification-before-refusal system to reduce missed opportunities
 - Human-in-the-loop support for approvals and escalations  
+- Duplicate message prevention to avoid processing the same message multiple times
 - Extensible design for future integrations (booking, CRM, reviews)
 
 ---
@@ -56,8 +59,12 @@ WhatsApp API (Twilio / Meta)
         ↓
 Single Webhook Endpoint
         ↓
+Duplicate Message Prevention
+        ↓
 Routing Logic (Business Identification)
         ↓
 LangGraph AI Agent
+        ↓
+Action Decision (Answer/Clarify/Book/Escalate)
         ↓
 Response Sent Back to WhatsApp
